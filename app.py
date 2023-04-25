@@ -34,7 +34,7 @@ st.set_page_config(
 st.title("Chat TUT")
 
 with st.form("my_form", clear_on_submit=False):
-    col1, col2, col3 = st.columns((1, 1))
+    col1, col2, col3 = st.columns((1, 1, 1))
     with col1:
         prompt = st.text_input("質問を入力してください")
         submitted = st.form_submit_button("質問する")
@@ -43,11 +43,11 @@ with st.form("my_form", clear_on_submit=False):
         image = Image.open('image/img.png')
         st.image(image, use_column_width=True)
 
-    # with col3:
-    #     file_ = open("image/img.gif", "rb")
-    #     contents = file_.read()
-    #     data_url = base64.b64encode(contents).decode("utf-8")
-    #     file_.close()
+    with col3:
+        file_ = open("image/img.gif", "rb")
+        contents = file_.read()
+        data_url = base64.b64encode(contents).decode("utf-8")
+        file_.close()
 
         st.markdown(f'<img src="data:image/gif;base64,{data_url}" alt="cat gif">',
                     unsafe_allow_html=True
