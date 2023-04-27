@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from PIL import Image
 
 from chattut import Chattut
-from prompt import PromptLogger
+from comlog import CommunicateLogger
 
 
 def main():
@@ -40,7 +40,7 @@ def application(color:list, answer:str):
             """
         })
 
-    promptlogger = PromptLogger("data/prompt_log.csv", "data/prompt_log.jsonl")
+    communicate_logger = CommunicateLogger("data/prompt_log.csv", "data/prompt_log.jsonl")
 
     st.title("Chat TUT")
 
@@ -53,7 +53,7 @@ def application(color:list, answer:str):
                     unsafe_allow_html=True
                     )
 
-        answerlocation = st.empty()
+        answer_location = st.empty()
 
         col1, col2 = st.columns((3, 1))
         with col1:
@@ -64,11 +64,11 @@ def application(color:list, answer:str):
             submitted = st.form_submit_button("質問する")
 
         if submitted:
-            answerlocation.text("回答を考え中...")
+            answer_location.text("回答を考え中...")
             time.sleep(3)
-            answerlocation.text(answer)
-            promptlogger.logger_csv(prompt, answer)
-            promptlogger.logger_json(prompt, answer)
+            answer_location.text(answer)
+            communicate_logger.logger_csv(prompt, answer)
+            communicate_logger.logger_json(prompt, answer)
 
     # UIカラーパレットテスト
     st.write(f'<p><font color={color["neutrals900"]}>neutrals900</font></p>', unsafe_allow_html=True)
