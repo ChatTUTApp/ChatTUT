@@ -8,7 +8,7 @@ class PromptLogger:
         self.filename_json = json
 
     def logger_csv(self, prompt, answer):
-        self.consele_log("INFO", "START", "self.filename_csv")
+        self.consele_log("INFO", "START", target_file=self.filename_csv)
         answer = answer.replace("\n", "")   # 改行を削除
         answer = answer.replace(" ", "")    # 空白を削除
         data = [[prompt, answer]]
