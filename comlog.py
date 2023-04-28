@@ -11,7 +11,7 @@ class ConsoleLogger:
 
     def console_log(self, log_level, event_detail, processing_contents):
         dt_now = self._time()
-        print(f'[{log_level:<5}] {dt_now} {event_detail} - {processing_contents}')
+        print(f'{"["+log_level+"]":<7} {dt_now} {event_detail:<5} - {processing_contents}')
 
     def _time(self):
         # 現在時刻を取得(マイクロ秒は切り捨て)
@@ -20,7 +20,6 @@ class ConsoleLogger:
 
 class CommunicateLogger(ConsoleLogger):
     def __init__(self, csv, json):
-        super().__init__()
         self.filename_csv = csv
         self.filename_json = json
 
