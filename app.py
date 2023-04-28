@@ -151,11 +151,7 @@ def machine_learning(prompt):
     ################
     api_key = os.getenv("OPENAI_API_KEY")
     model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
-    chattut = Chattut(model_type["is_bert"])
-    # chattut = Chattut()
-    # answer = chattut.create_response(prompt, model)
-    # answer = answer['choices'][0]['text']
-    answer = "answer\nanswer\nanswer"
+    chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
     answer = chattut.create_response(prompt)
     return answer
 
