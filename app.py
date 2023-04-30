@@ -13,6 +13,8 @@ from PIL import Image
 from chattut import Chattut
 from comlog import CommunicateLogger
 from comlog import ConsoleLogger
+from responser.openai_api import OpenAI_API
+from responser.mybert import MyBERT
 
 def main():
     pageconfig()    # ページ設定
@@ -20,12 +22,11 @@ def main():
     # color:背景色, on_color:文字色     color(key)の上にon_color(key)で対応
     color = ast.literal_eval(os.environ["COLOR_DICT"])  # color: list(key: 色の名前, value: カラーコード)
     on_color = ast.literal_eval(os.environ["ON_COLOR_DICT"])  # on_color: list(key: 色の名前, value: カラーコード)
-    answer = machine_learning()
-
+    # answer = machine_learning()
     begin()
     page = sidebar()
     if page == "ホーム":
-        application(color, on_color, answer)
+        application(color, on_color)
     elif page == "設定":
         app_settings(color, on_color)
     elif page == "Q&A（よくあるご質問）": # TODO:以下関数化
@@ -91,7 +92,7 @@ def sidebar():
         return selected_options
 
 # メインアプリ画面
-def application(color:list, on_color:list, answer:str):
+def application(color:list, on_color:list, answer:str=""):
     communicate_logger = CommunicateLogger("data/prompt_log.csv", "data/prompt_log.jsonl")
 
     st.title("Chat TUT")
@@ -112,6 +113,7 @@ def application(color:list, on_color:list, answer:str):
         col1, col2 = st.columns((3, 1))
         with col1:
             prompt = st.text_input("質問を入力してください")
+            answer = machine_learning(prompt)
         with col2:
             st.write("")
             st.write("")
@@ -161,16 +163,14 @@ def app_settings(color:list, on_color:list):
     html.create_html(mode="p", text="success", color="success", font_size=20,
                     width=150, height=50)
 
-def machine_learning():
+def machine_learning(prompt):
     ################
     ### 機械学習 ###
     ################
     api_key = os.getenv("OPENAI_API_KEY")
-    chattut = Chattut(api_key)
-    model = os.getenv("MODEL")
-    # answer = chattut.create_response(prompt, model)
-    # answer = answer['choices'][0]['text']
-    answer = "answer\nanswer\nanswer"
+    model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
+    chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
+    answer = chattut.create_response(prompt)
     return answer
 
 class Create_html:
