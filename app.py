@@ -17,16 +17,18 @@ from comlog import ConsoleLogger
 def main():
     pageconfig()    # ページ設定
     load_dotenv("variable.env") # 変数読み込み
+    # color:背景色, on_color:文字色     color(key)の上にon_color(key)で対応
     color = ast.literal_eval(os.environ["COLOR_DICT"])  # color: list(key: 色の名前, value: カラーコード)
+    on_color = ast.literal_eval(os.environ["ON_COLOR_DICT"])  # on_color: list(key: 色の名前, value: カラーコード)
     answer = machine_learning()
 
     begin()
     page = sidebar()
     if page == "ホーム":
-        application(color, answer)
-    elif page == "設定":    # TODO:以下関数化
-        st.title("設定")
-    elif page == "Q&A（よくあるご質問）":
+        application(color, on_color, answer)
+    elif page == "設定":
+        app_settings(color, on_color)
+    elif page == "Q&A（よくあるご質問）": # TODO:以下関数化
         st.title("Q&A（よくあるご質問）")
     elif page == "お問い合わせ":
         st.title("お問い合わせ")
@@ -89,7 +91,7 @@ def sidebar():
         return selected_options
 
 # メインアプリ画面
-def application(color:list, answer:str):
+def application(color:list, on_color:list, answer:str):
     communicate_logger = CommunicateLogger("data/prompt_log.csv", "data/prompt_log.jsonl")
 
     st.title("Chat TUT")
@@ -116,32 +118,48 @@ def application(color:list, answer:str):
             submitted = st.form_submit_button("質問する")
 
         if submitted:
-            answer_location.text("回答を考え中...")
-            time.sleep(3)
-            answer_location.text(answer)
-            communicate_logger.logger_csv(prompt, answer)
-            communicate_logger.logger_json(prompt, answer)
+            with answer_location:
+                with st.spinner("回答を考え中..."):
+                    time.sleep(3)
+                answer_location.text(answer)
+                communicate_logger.logger_csv(prompt, answer)
+                communicate_logger.logger_json(prompt, answer)
+
+def app_settings(color:list, on_color:list):
+    st.title("設定")
 
     # UIカラーパレットテスト
     st.header('UIカラーパレットテスト')
-    st.write(f'<p><font color={color["neutrals900"]}>neutrals900</font>|'
-                f'<font color={color["neutrals700"]}>neutrals700</font>|',
-                f'<font color={color["neutrals500"]}>neutrals500</font>|',
-                f'<font color={color["neutrals300"]}>neutrals300</font></p>',
-                unsafe_allow_html=True)
-    st.write(f'<p><font color={color["primary700"]}>primary700</font>|'
-                f'<font color={color["primary400"]}>primary400</font>|'
-                f'<font color={color["primary200"]}>primary200</font>|'
-                f'<font color={color["primary100"]}>primary100</font></p>',
-                unsafe_allow_html=True)
-    st.write(f'<p><font color={color["secondary700"]}>secondary700</font>|'
-                f'<font color={color["secondary400"]}>secondary400</font>|'
-                f'<font color={color["secondary200"]}>secondary200</font>|'
-                f'<font color={color["secondary100"]}>secondary100</font></p>',
-                unsafe_allow_html=True)
-    st.write(f'<p><font color={color["error"]}>error</font>|'
-                f'<font color={color["success"]}>success</font></p>',
-                unsafe_allow_html=True)
+
+    html = Create_html("./templates/html/test.html", "./static/css/test.css", color, on_color)
+    html.create_html(mode="p", text="neutrals900", color="neutrals900", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="neutrals700", color="neutrals700", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="neutrals500", color="neutrals500", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="neutrals300", color="neutrals300", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="primary700", color="primary700", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="primary400", color="primary400", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="primary200", color="primary200", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="primary100", color="primary100", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="secondary700", color="secondary700", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="secondary400", color="secondary400", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="secondary200", color="secondary200", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="secondary100", color="secondary100", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="error", color="error", font_size=20,
+                    width=150, height=50)
+    html.create_html(mode="p", text="success", color="success", font_size=20,
+                    width=150, height=50)
 
 def machine_learning():
     ################
@@ -154,6 +172,37 @@ def machine_learning():
     # answer = answer['choices'][0]['text']
     answer = "answer\nanswer\nanswer"
     return answer
+
+class Create_html:
+    def __init__(self, html:str, css:str, color:list, on_color:list):
+        self.html = html
+        self.css = css
+        self.color = color
+        self.on_color = on_color
+
+    def create_html(self, mode:str, text:str, color:str, font_size:int=10, font_weight:int=None,
+                    width:int=None, height:int=None, margin:int=0, padding:int=0):
+        with open(self.html, "r") as h:
+            with open(self.css, "r") as c:
+                stc.html(
+                    h.read().format(
+                        mode=mode,
+                        text=text,
+                        style=c.read().format(
+                            mode=mode,
+                            color=self.on_color[color],
+                            background_color=self.color[color],
+                            font_size=str(font_size)+"px" if font_size!=None else font_size,
+                            font_weight=str(font_weight)+"px" if font_weight!=None else font_weight,
+                            width=str(width)+"px" if width!=None else width,
+                            height=str(height)+"px" if height!=None else height,
+                            margin=str(margin)+"px" if margin!=None else margin,
+                            padding=str(padding)+"px" if padding!=None else padding,
+                        )
+                    ),
+                    width=width+15,
+                    height=height
+                )
 
 if __name__ == "__main__":
     main()

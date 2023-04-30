@@ -1,0 +1,10 @@
+{mode} {{
+    color: {color};
+    background-color: {background_color};
+    font-size: {font_size};
+    font-weight: {font_weight};
+    width: {width};
+    height: {height};
+    margin: {margin};
+    padding: {padding};
+}}
