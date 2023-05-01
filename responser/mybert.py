@@ -5,7 +5,7 @@ from tempfile import NamedTemporaryFile
 import streamlit as st
 import os
 
-from aws import AWS
+# from aws import AWS
 
 class MyBERT:
   def __init__(self):
@@ -20,10 +20,10 @@ class MyBERT:
 
   # 回答を生成
   def create_response(self, prompt):
-    context  = '私の名前は、Chat TUTです。私は技科生のためのアシスタントとして生まれました。'\
-    '技科大の特徴は女子が少ないことです。'\
+    context_data  = open('../data/train_data_bert.txt', 'r', encoding='UTF-8')
 
-    inputs = self.tokenizer.encode_plus(prompt, context, add_special_tokens=True, return_tensors="pt")
+    inputs = self.tokenizer.encode_plus(prompt, context_data.read(), add_special_tokens=True, return_tensors="pt")
+    context_data.close()
     input_ids = inputs["input_ids"].tolist()[0]
     output = self.model(**inputs)
 
@@ -36,7 +36,7 @@ class MyBERT:
 
 def main():
   chattut = MyBERT()
-  prompt = "あなたの名前は何ですか？"
+  prompt = "あなたの役目は何ですか？"
   answer = chattut.create_response(prompt)
 
   # 結果出力
