@@ -114,13 +114,13 @@ def application(color:list, on_color:list, answer:str=""):
         col1, col2 = st.columns((3, 1))
         with col1:
             prompt = st.text_input("質問を入力してください")
-            answer = machine_learning(prompt)
         with col2:
             st.write("")
             st.write("")
             submitted = st.form_submit_button("質問する")
 
         if submitted:
+            answer = machine_learning(prompt)
             with answer_location:
                 with st.spinner("回答を考え中..."):
                     time.sleep(3)
@@ -169,11 +169,17 @@ def machine_learning(prompt):
     ### 機械学習 ###
     ################
     api_key = os.getenv("OPENAI_API_KEY")
-    model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
-    chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
+    responser = select_responser(api_key)
+    chattut = Chattut(responser) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
     answer = chattut.create_response(prompt)
     # answer = "answer"
     return answer
+
+# 自然言語モデルの選択
+@st.cache_resource
+def select_responser(api_key):
+    model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
+    return model_type["is_bert"]
 
 class Create_html:
     def __init__(self, html:str, css:str, color:list, on_color:list):

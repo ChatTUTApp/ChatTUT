@@ -7,7 +7,6 @@ import streamlit as st
 from aws import AWS
 
 class MyBERT:
-  @st.cache_resource
   def __init__(self):
     # aws = AWS()
     self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model")
