@@ -3,13 +3,16 @@ import torch
 from dotenv import load_dotenv
 from tempfile import NamedTemporaryFile 
 import streamlit as st
+import os
 
 from aws import AWS
 
 class MyBERT:
   def __init__(self):
     # aws = AWS()
-    self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model", use_auth_token=True)
+    load_dotenv("variable.env")
+    haggingface_token = os.getenv("HAGGINGFACE_TOKEN")
+    self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model", use_auth_token=haggingface_token)
     self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking') 
 
   def fine_tuning(self):
