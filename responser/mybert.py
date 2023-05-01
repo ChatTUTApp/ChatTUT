@@ -9,7 +9,7 @@ from aws import AWS
 class MyBERT:
   def __init__(self):
     # aws = AWS()
-    self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model")
+    self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model", use_auth_token=True)
     self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking') 
 
   def fine_tuning(self):
