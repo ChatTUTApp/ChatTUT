@@ -7,10 +7,8 @@ from aws import AWS
 
 class MyBERT:
   def __init__(self):
-    aws = AWS()#https://chattut.s3.ap-northeast-1.amazonaws.com/output/pytorch_model.bin
-    # self.model = AutoModelForQuestionAnswering.from_pretrained("https://chattut.s3.ap-northeast-1.amazonaws.com/output/")
-    # self.model = AutoModelForQuestionAnswering.from_pretrained("responser/transformer/output/")
-    # self.model = aws.load_model("output")
+    # aws = AWS()
+    self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model")
     self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking') 
 
   def fine_tuning(self):

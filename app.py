@@ -169,10 +169,10 @@ def machine_learning(prompt):
     ### 機械学習 ###
     ################
     api_key = os.getenv("OPENAI_API_KEY")
-    # model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
-    # chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
-    # answer = chattut.create_response(prompt)
-    answer = "answer"
+    model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
+    chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
+    answer = chattut.create_response(prompt)
+    # answer = "answer"
     return answer
 
 class Create_html:
