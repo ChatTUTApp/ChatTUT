@@ -1,13 +1,21 @@
 from transformers import BertJapaneseTokenizer, AutoModelForQuestionAnswering
 import torch
 from dotenv import load_dotenv
+from tempfile import NamedTemporaryFile
+import streamlit as st
+import os
+
+from aws import AWS
 
 class MyBERT:
   def __init__(self):
-    self.model = AutoModelForQuestionAnswering.from_pretrained('responser/transformers/output/')
-    self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking') 
+    # aws = AWS()
+    load_dotenv("variable.env")
+    haggingface_token = os.getenv("HAGGINGFACE_TOKEN")
+    self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model", use_auth_token=haggingface_token)
+    self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking')
 
-  def fine_tuning(self, file_name):
+  def fine_tuning(self):
     print("fine tune bert")
 
   # 回答を生成
@@ -19,8 +27,8 @@ class MyBERT:
     input_ids = inputs["input_ids"].tolist()[0]
     output = self.model(**inputs)
 
-    answer_start = torch.argmax(output.start_logits)  
-    answer_end = torch.argmax(output.end_logits) + 1 
+    answer_start = torch.argmax(output.start_logits)
+    answer_end = torch.argmax(output.end_logits) + 1
     response = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
     response = response.replace(' ', '')
 
