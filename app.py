@@ -15,6 +15,7 @@ from comlog import CommunicateLogger
 from comlog import ConsoleLogger
 from responser.openai_api import OpenAI_API
 from responser.mybert import MyBERT
+##
 
 def main():
     pageconfig()    # ページ設定
@@ -169,8 +170,9 @@ def machine_learning(prompt):
     ################
     api_key = os.getenv("OPENAI_API_KEY")
     model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
-    chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
-    answer = chattut.create_response(prompt)
+    # chattut = Chattut(model_type["is_bert"]) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
+    # answer = chattut.create_response(prompt)
+    answer = "answer"
     return answer
 
 class Create_html:
