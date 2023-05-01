@@ -20,7 +20,7 @@ class MyBERT:
 
   # 回答を生成
   def create_response(self, prompt):
-    context_data  = open('../data/train_data_bert.txt', 'r', encoding='UTF-8')
+    context_data  = open('data/train_data_bert.txt', 'r', encoding='UTF-8') # 回答をテキストファイルから探す
 
     inputs = self.tokenizer.encode_plus(prompt, context_data.read(), add_special_tokens=True, return_tensors="pt")
     context_data.close()
