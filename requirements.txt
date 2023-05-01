@@ -6,3 +6,4 @@ transformers==4.28.1
 fugashi[unidic-lite]==1.2.1
 ipadic==1.0.0
 datasets==2.12.0
+boto3==1.26.123

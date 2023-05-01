@@ -1,10 +1,11 @@
 from transformers import BertJapaneseTokenizer, AutoModelForQuestionAnswering
 import torch
 from dotenv import load_dotenv
+from tempfile import NamedTemporaryFile 
 
 class MyBERT:
   def __init__(self):
-    self.model = AutoModelForQuestionAnswering.from_pretrained('responser/transformers/output/')
+    self.model = AutoModelForQuestionAnswering.from_pretrained("responser/transformers/output/") #responser/transformers/output/
     self.tokenizer = BertJapaneseTokenizer.from_pretrained('cl-tohoku/bert-base-japanese-whole-word-masking') 
 
   def fine_tuning(self, file_name):
