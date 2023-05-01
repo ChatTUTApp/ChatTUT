@@ -2,10 +2,12 @@ from transformers import BertJapaneseTokenizer, AutoModelForQuestionAnswering
 import torch
 from dotenv import load_dotenv
 from tempfile import NamedTemporaryFile 
+import streamlit as st
 
 from aws import AWS
 
 class MyBERT:
+  @st.cache_resource
   def __init__(self):
     # aws = AWS()
     self.model = AutoModelForQuestionAnswering.from_pretrained("chattut/bert-model")
