@@ -20,10 +20,11 @@ class MyBERT:
 
   # 回答を生成
   def create_response(self, prompt):
-    context_data  = open('data/train_data_bert.txt', 'r', encoding='UTF-8') # 回答をテキストファイルから探す
-
-    inputs = self.tokenizer.encode_plus(prompt, context_data.read(), add_special_tokens=True, return_tensors="pt")
-    context_data.close()
+    context  = open('data/train_data_bert.txt', 'r', encoding='UTF-8') # 回答をテキストファイルから探す
+    context_data = context.read()
+    context_data=context_data.replace('\n','') # 改行を削除
+    inputs = self.tokenizer.encode_plus(prompt, context_data, add_special_tokens=True, return_tensors="pt")
+    context.close()
     input_ids = inputs["input_ids"].tolist()[0]
     output = self.model(**inputs)
 
