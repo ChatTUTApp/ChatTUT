@@ -1,6 +1,7 @@
 import csv
 import json
 import datetime
+import gspread
 
 
 class ConsoleLogger:
@@ -55,3 +56,20 @@ class CommunicateLogger(ConsoleLogger):
                 self.console_log("INFO", "Write", data)
             finally:
                 self.console_log("INFO", "END", self.filename_json)
+
+    def logging2gspread(self, prompt, answer):
+        key_name = 'chattut-c61545aa9d0b.json'
+        sheet_name = 'ChatTUT_communicate_log'
+
+        gc = gspread.service_account(filename= key_name)
+
+
+        wks = gc.open(sheet_name).sheet1
+
+        next_row = self.next_available_row(wks)
+        wks.update_cell(next_row, 1, prompt)
+        wks.update_cell(next_row, 10, answer)
+
+    def next_available_row(self, sheet1):
+        str_list = list(filter(None, sheet1.col_values(10)))
+        return len(str_list)+1

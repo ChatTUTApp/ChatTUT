@@ -125,8 +125,9 @@ def application(color:list, on_color:list, answer:str=""):
                 with st.spinner("回答を考え中..."):
                     time.sleep(3)
                 answer_location.text(answer)
-                communicate_logger.logger_csv(prompt, answer)
-                communicate_logger.logger_json(prompt, answer)
+                # communicate_logger.logger_csv(prompt, answer)
+                # communicate_logger.logger_json(prompt, answer)
+                communicate_logger.logging2gspread(prompt, answer)
 
 def app_settings(color:list, on_color:list):
     st.title("設定")
