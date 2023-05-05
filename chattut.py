@@ -5,9 +5,6 @@ Chattutクラスがappにて選択されたモデルから
 """
 
 class Chattut:
-  def __init__(self, responser):
-    self.responser = responser
-
   def record(self):
     print("voice recoding")
 
@@ -15,8 +12,8 @@ class Chattut:
     print("chattut speak")
 
   # 回答を生成
-  def create_response(self, prompt):
-    response = self.responser.create_response(prompt)
+  def create_response(self, prompt, responser):
+    response = responser.create_response(prompt)
     return response
 
 def main():
