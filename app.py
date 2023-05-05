@@ -18,18 +18,19 @@ from responser.mybert import MyBERT
 ##
 
 def main():
-    pageconfig()    # ページ設定
+    app = APP()
+    app.pageconfig()    # ページ設定
     load_dotenv("variable.env") # 変数読み込み
     # color:背景色, on_color:文字色     color(key)の上にon_color(key)で対応
     color = ast.literal_eval(os.environ["COLOR_DICT"])  # color: list(key: 色の名前, value: カラーコード)
     on_color = ast.literal_eval(os.environ["ON_COLOR_DICT"])  # on_color: list(key: 色の名前, value: カラーコード)
     # answer = machine_learning()
-    begin()
-    page = sidebar()
+    # app.begin()
+    page = app.sidebar()
     if page == "ホーム":
-        application(color, on_color)
+        app.application(color, on_color)
     elif page == "設定":
-        app_settings(color, on_color)
+        app.app_settings(color, on_color)
     elif page == "Q&A（よくあるご質問）": # TODO:以下関数化
         st.title("Q&A（よくあるご質問）")
     elif page == "お問い合わせ":
@@ -54,133 +55,151 @@ def main():
         st.write("定期的に情報を運営がクリーニングし学習を行っていることの説明")
         st.write("たくさん覚えるためにたくさん話しかけてほしいこと")
 
-# ページ更新時に読み込まない
-@st.cache_data
-def begin():
-    ConsoleLogger()
+class APP:
+    def __init__(self):
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.model_type = {"is_bert": MyBERT(), "is_openai_api": OpenAI_API(self.api_key)}
+        self.responser = self.model_type["is_bert"]
+        ConsoleLogger()
+        self.chattut = Chattut()
 
-# ページ設定
-def pageconfig():
-    icon = Image.open('image/icon.png')
-    st.set_page_config(
-        page_title="Chat TUT",
-        page_icon=icon,
-        layout="centered",
-        initial_sidebar_state="auto",
-        menu_items={
-            'Get Help': 'https://www.google.com',
-            'Report a bug': "https://www.google.com",
-            'About': """
-            # Chat TUT
-            アプリの説明
-            """
-        })
+    # ページ更新時に読み込まない
+    # @st.cache_data
+    # def begin(self):
+    #     ConsoleLogger()
 
-# サイドバー
-def sidebar():
-    with st.sidebar:
-        selected_options = streamlit_option_menu.option_menu(menu_title=None,
-            options=["ホーム", "---", "設定", "---", "Q&A（よくあるご質問）", "お問い合わせ", "ご意見", "---", "バージョン", "プライバシーポリシー", "利用規約", "ヘルプ", "Chat TUTについて"],
-            icons=["house", "", "gear", "", "question-lg", "envelope", "chat-left", "", "ticket", "person", "shield-exclamation", "question-circle", "info-circle"],
-            default_index=0,
-            styles={
-                "container": {"padding": "0!important", "background-color": "#f0f5f9"},
-                "icon": {"color": "#2589d0", "font-size": "20px"},
-                "nav-link": {"font-size": "15px", "text-align": "left", "margin": "0px", "--hover-color": "#2589d0"},
-                "nav-link-selected": {"background-color": "#2589d0"},
-            }
-        )
-        return selected_options
+    # ページ設定
+    def pageconfig(self):
+        icon = Image.open('image/icon.png')
+        st.set_page_config(
+            page_title="Chat TUT",
+            page_icon=icon,
+            layout="centered",
+            initial_sidebar_state="auto",
+            menu_items={
+                'Get Help': 'https://www.google.com',
+                'Report a bug': "https://www.google.com",
+                'About': """
+                # Chat TUT
+                アプリの説明
+                """
+            })
 
-# メインアプリ画面
-def application(color:list, on_color:list, answer:str=""):
-    communicate_logger = CommunicateLogger("data/prompt_log.csv", "data/prompt_log.jsonl")
+    # サイドバー
+    def sidebar(self):
+        with st.sidebar:
+            selected_options = streamlit_option_menu.option_menu(menu_title=None,
+                options=["ホーム", "---", "設定", "---", "Q&A（よくあるご質問）", "お問い合わせ", "ご意見", "---", "バージョン", "プライバシーポリシー", "利用規約", "ヘルプ", "Chat TUTについて"],
+                icons=["house", "", "gear", "", "question-lg", "envelope", "chat-left", "", "ticket", "person", "shield-exclamation", "question-circle", "info-circle"],
+                default_index=0,
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#f0f5f9"},
+                    "icon": {"color": "#2589d0", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin": "0px", "--hover-color": "#2589d0"},
+                    "nav-link-selected": {"background-color": "#2589d0"},
+                }
+            )
+            return selected_options
 
-    st.title("Chat TUT")
+    # メインアプリ画面
+    def application(self, color:list, on_color:list, answer:str=""):
+        communicate_logger = CommunicateLogger("data/prompt_log.csv", "data/prompt_log.jsonl")
 
-    menu_location = st.empty()
-
-    with st.form("main_form", clear_on_submit=False):
-        file_ = open("image/img.gif", "rb")
-        contents = file_.read()
-        data_url = base64.b64encode(contents).decode("utf-8")
-        file_.close()
-        st.markdown(f'<img src="data:image/gif;base64,{data_url}" alt="cat gif" width="100%" height="100%">',
-                    unsafe_allow_html=True
-                    )
-
-        answer_location = st.empty()
-
-        col1, col2 = st.columns((3, 1))
-        with col1:
-            prompt = st.text_input("質問を入力してください")
-        with col2:
+        title_col1, title_col2 = st.columns(2)
+        with title_col1:
+            st.title("Chat TUT")
+        with title_col2:
             st.write("")
             st.write("")
-            submitted = st.form_submit_button("質問する")
+            st.write("")
+            st.write("version 1.0.0")
 
-        if submitted:
-            answer = machine_learning(prompt)
-            with answer_location:
-                with st.spinner("回答を考え中..."):
-                    time.sleep(3)
-                answer_location.text(answer)
-                # communicate_logger.logger_csv(prompt, answer)
-                # communicate_logger.logger_json(prompt, answer)
-                communicate_logger.logging2gspread(prompt, answer)
+        model_option = st.selectbox(
+        'モデルを選択してください',
+        ('BERT', 'GPT-3.5'))
+        if model_option == "BERT":
+            self.select_responser("BERT")
+        elif model_option == "GPT-3.5":
+            self.select_responser("GPT-3.5")
 
-def app_settings(color:list, on_color:list):
-    st.title("設定")
+        menu_location = st.empty()
 
-    # UIカラーパレットテスト
-    st.header('UIカラーパレットテスト')
+        with st.form("main_form", clear_on_submit=False):
+            file_ = open("image/img.gif", "rb")
+            contents = file_.read()
+            data_url = base64.b64encode(contents).decode("utf-8")
+            file_.close()
+            st.markdown(f'<img src="data:image/gif;base64,{data_url}" alt="cat gif" width="100%" height="100%">',
+                        unsafe_allow_html=True
+                        )
 
-    html = Create_html("./templates/html/test.html", "./static/css/test.css", color, on_color)
-    html.create_html(mode="p", text="neutrals900", color="neutrals900", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="neutrals700", color="neutrals700", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="neutrals500", color="neutrals500", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="neutrals300", color="neutrals300", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="primary700", color="primary700", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="primary400", color="primary400", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="primary200", color="primary200", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="primary100", color="primary100", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="secondary700", color="secondary700", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="secondary400", color="secondary400", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="secondary200", color="secondary200", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="secondary100", color="secondary100", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="error", color="error", font_size=20,
-                    width=150, height=50)
-    html.create_html(mode="p", text="success", color="success", font_size=20,
-                    width=150, height=50)
+            answer_location = st.empty()
 
-def machine_learning(prompt):
-    ################
-    ### 機械学習 ###
-    ################
-    api_key = os.getenv("OPENAI_API_KEY")
-    responser = select_responser(api_key)
-    chattut = Chattut(responser) # TODO アプリ画面上でモードを切り替えられるようになったらいいなぁ
-    answer = chattut.create_response(prompt)
-    # answer = "answer"
-    return answer
+            col1, col2 = st.columns((3, 1))
+            with col1:
+                prompt = st.text_input("質問を入力してください")
+            with col2:
+                st.write("")
+                st.write("")
+                submitted = st.form_submit_button("質問する")
 
-# 自然言語モデルの選択
-@st.cache_resource
-def select_responser(api_key):
-    model_type = {"is_bert":MyBERT(), "is_openai_api": OpenAI_API(api_key)}
-    return model_type["is_bert"]
+            if submitted:
+                answer = self.machine_learning(prompt)
+                with answer_location:
+                    with st.spinner("回答を考え中..."):
+                        time.sleep(3)
+                    answer_location.text(answer)
+                    # communicate_logger.logger_csv(prompt, answer)
+                    # communicate_logger.logger_json(prompt, answer)
+                    communicate_logger.logging2gspread(prompt, answer)
+
+    def app_settings(self, color:list, on_color:list):
+        st.title("設定")
+
+        # UIカラーパレットテスト
+        st.header('UIカラーパレットテスト')
+
+        html = Create_html("./templates/html/test.html", "./static/css/test.css", color, on_color)
+        html.create_html(mode="p", text="neutrals900", color="neutrals900", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="neutrals700", color="neutrals700", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="neutrals500", color="neutrals500", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="neutrals300", color="neutrals300", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="primary700", color="primary700", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="primary400", color="primary400", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="primary200", color="primary200", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="primary100", color="primary100", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="secondary700", color="secondary700", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="secondary400", color="secondary400", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="secondary200", color="secondary200", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="secondary100", color="secondary100", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="error", color="error", font_size=20,
+                        width=150, height=50)
+        html.create_html(mode="p", text="success", color="success", font_size=20,
+                        width=150, height=50)
+
+    def machine_learning(self, prompt):
+        answer = self.chattut.create_response(prompt, self.responser)
+        return answer
+    
+    def select_responser(self, model_name):
+        if model_name == "BERT":
+            self.responser = self.model_type["is_bert"]
+        elif model_name == "GPT-3.5":
+            self.responser = self.model_type["is_openai_api"]
+        else:
+            self.responser = self.model_type["is_openai_api"]
 
 class Create_html:
     def __init__(self, html:str, css:str, color:list, on_color:list):
