@@ -5,11 +5,6 @@ import gspread
 
 
 class ConsoleLogger:
-    def __init__(self):
-        print("----------------------------------------------------------------")
-        self.console_log("INFO", "BEGIN", "ChatTUT")
-        print("----------------------------------------------------------------")
-
     def console_log(self, log_level, event_detail, processing_contents):
         dt_now = self._time()
         print(f'{"["+log_level+"]":<7} {dt_now} {event_detail:<5} - {processing_contents}')
