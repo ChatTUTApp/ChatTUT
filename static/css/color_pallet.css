@@ -39,7 +39,7 @@
 }
 
 .primary900 {
-    color: #212121;
+    color: #FFFFFF;
     background-color: #FFA000;
 }
 
@@ -79,12 +79,12 @@
 }
 
 .secondary300 {
-    color: #FFFFFF;
+    color: #212121;
     background-color: #BADCFF;
 }
 
 .secondary100 {
-    color: #FFFFFF;
+    color: #212121;
     background-color: #E2F1FF;
 }
 
@@ -97,4 +97,3 @@
     color: #FFFFFF;
     background-color: #00E676;
 }
-

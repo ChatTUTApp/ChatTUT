@@ -1,0 +1,26 @@
+.heading-038 {
+    position: relative;
+    padding: .5em 1.2em;
+    color: #333333;
+}
+
+.heading-038::before,
+.heading-038::after {
+    display: inline-block;
+    position: absolute;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border: 2px solid #2589d0;
+    content: '';
+}
+
+.heading-038::before {
+    top: calc(50% - 3px);
+    left: 0;
+}
+
+.heading-038::after {
+    top: calc(50% + 3px);
+    left: 5px;
+}
