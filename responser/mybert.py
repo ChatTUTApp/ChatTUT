@@ -33,6 +33,9 @@ class MyBERT:
     response = self.tokenizer.convert_tokens_to_string(self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
     response = response.replace(' ', '')
 
+    if response == "":
+      return "う～ん、質問の仕方を変えてほしいです！"
+
     return response + "です!"
 
 def main():
