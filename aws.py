@@ -2,9 +2,9 @@ import boto3
 from botocore.exceptions import ClientError
 import os
 from dotenv import load_dotenv
-from io import BytesIO 
-from tempfile import NamedTemporaryFile 
-import json 
+from io import BytesIO
+from tempfile import NamedTemporaryFile
+import json
 
 from transformers import BertJapaneseTokenizer, AutoModelForQuestionAnswering
 
@@ -39,7 +39,7 @@ class AWS:
     #     })
     #     return model_folder
 
-    def s3_fileobj(self, key): 
+    def s3_fileobj(self, key):
         """
         Yields a file object from the filename at {bucket}/{key}
 
@@ -47,8 +47,8 @@ class AWS:
             bucket (str): Name of the S3 bucket where you model is stored
             key (str): Relative path from the base of your bucket, including the filename and extension of the object to be retrieved.
         """
-        obj = self.s3.get_object(Bucket=self.bucket, Key=key) 
-        yield BytesIO(obj["Body"].read()) 
+        obj = self.s3.get_object(Bucket=self.bucket, Key=key)
+        yield BytesIO(obj["Body"].read())
 
     def load_model(self, path_to_model, model_name='pytorch_model'):
         """
@@ -61,18 +61,18 @@ class AWS:
             f'{path_to_model}/config.json'
 
         """
-        tempfile = NamedTemporaryFile() 
-        with self.s3_fileobj(f'{path_to_model}/{model_name}.bin') as f: 
-            tempfile.write(f.read()) 
-    
-        with self.s3_fileobj(f'{path_to_model}/config.json') as f: 
-            dict_data = json.load(f) 
+        tempfile = NamedTemporaryFile()
+        with self.s3_fileobj(f'{path_to_model}/{model_name}.bin') as f:
+            tempfile.write(f.read())
+
+        with self.s3_fileobj(f'{path_to_model}/config.json') as f:
+            dict_data = json.load(f)
             # config = AutoModelForQuestionAnswering.from_pretrained(dict_data)
             config = AutoModelForQuestionAnswering.from_config(dict_data)
-            # config = PretrainedConfig.from_dict(dict_data) 
-    
-        # model = PreTrainedModel.from_pretrained(tempfile.name, config=config) 
-        return config 
+            # config = PretrainedConfig.from_dict(dict_data)
+
+        # model = PreTrainedModel.from_pretrained(tempfile.name, config=config)
+        return config
 
 if __name__ == "__main__":
     aws = AWS()

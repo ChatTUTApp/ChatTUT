@@ -1,0 +1,28 @@
+.heading-031 {
+    position: relative;
+    padding: .3em 0 .2em 1em;
+    border-bottom: 3px solid #2589d0;
+    color: #333333;
+}
+
+.heading-031::before {
+    position: absolute;
+    top: 0;
+    left: .3em;
+    transform: rotate(55deg);
+    height: 11px;
+    width: 12px;
+    background: #2589d0;
+    content: '';
+}
+
+.heading-031::after {
+    position: absolute;
+    transform: rotate(15deg);
+    top: .6em;
+    left: 0;
+    height: 8px;
+    width: 8px;
+    background: #2589d0;
+    content: '';
+}

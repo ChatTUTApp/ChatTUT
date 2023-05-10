@@ -1,9 +1,9 @@
 [theme]
-# primaryColor="#ff0000" # 赤
-# backgroundColor="#000000" # 黒
-# secondaryBackgroundColor="#696969" # ダークグレー
-# textColor="#FFFFFF" # 白
-# font="sans serif"
+primaryColor="#FFA000" # primary900
+backgroundColor="#FFFFFF" # 白
+secondaryBackgroundColor="#E2F1FF" # secondary100
+textColor="#212121" # neutrals900
+font="sans serif"
 
 [server]
 headless = true
