@@ -63,8 +63,8 @@ class CommunicateLogger(ConsoleLogger):
 
         next_row = self.next_available_row(wks)
         wks.update_cell(next_row, 1, prompt)
-        wks.update_cell(next_row, 10, answer)
+        wks.update_cell(next_row, 4, answer)
 
     def next_available_row(self, sheet1):
-        str_list = list(filter(None, sheet1.col_values(10)))
+        str_list = list(filter(None, sheet1.col_values(4)))
         return len(str_list)+1
